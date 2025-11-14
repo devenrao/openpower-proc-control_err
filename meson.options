@@ -53,3 +53,6 @@ option(
     value: 'enabled',
     description: 'Enable the RBMC CFAM daemon',
 )
+
+option('ecmd_src_dir', type: 'string', description: 'Path to generated ECMD sources')
+option('ecmd_inc_dir', type: 'string', description: 'Path to ECMD include directory')

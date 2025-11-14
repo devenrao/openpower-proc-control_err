@@ -4,6 +4,7 @@
 #include <ecmdStructs.H>
 
 #include <ecmd_util.hpp>
+#include <phosphor-logging/lg2.hpp>
 extern "C"
 {
 #include <libpdbg.h>
@@ -11,6 +12,7 @@ extern "C"
 #include <phosphor-logging/lg2.hpp>
 
 #include <cstdint>
+
 uint32_t dllGetCfamRegister(const ecmdChipTarget& target, uint32_t address,
                             ecmdDataBuffer& ecmdData)
 {
@@ -63,5 +65,38 @@ uint32_t dllPutCfamRegister(const ecmdChipTarget& target, uint32_t address,
         lg2::error("Failed in fsi_write");
         return rc;
     }
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllGetEcid(const ecmdChipTarget&, ecmdDataBuffer&)
+{
+    lg2::error("dllGetEcid is not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllGetEcidVerbose(const ecmdChipTarget&, ecmdDataBuffer&,
+                           std::vector<std::string>&)
+{
+    lg2::error("dllGetEcidVerbose is not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllGetGpRegister(const ecmdChipTarget&, uint32_t, ecmdDataBuffer&)
+{
+    lg2::error("dllGetGpRegister is not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllPutGpRegister(const ecmdChipTarget&, uint32_t,
+                          const ecmdDataBuffer&)
+{
+    lg2::error("dllPutGpRegister is not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllPutGpRegisterUnderMask(const ecmdChipTarget&, uint32_t,
+                                   const ecmdDataBuffer&, const ecmdDataBuffer&)
+{
+    lg2::error("dllPutGpRegisterUnderMask is not implemented");
     return ECMD_SUCCESS;
 }

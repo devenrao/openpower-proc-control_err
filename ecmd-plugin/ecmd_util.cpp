@@ -43,6 +43,7 @@ struct pdbg_target* get_fsi_target(uint32_t pos)
 // Check if chassis is on/off
 bool isChassisOn()
 {
+    lg2::info("enter isChassisOn");
     constexpr std::string_view cmd = "obmcutil chassisstate 2>&1";
     std::array<char, 128> buffer{};
     std::string output;
@@ -68,22 +69,9 @@ bool isChassisOn()
     return output.contains("State.Chassis.PowerState.On");
 }
 
-// Start attention handler sevice
-int startAttentionHandlerService()
-{
-    constexpr const char* cmd = "systemctl start attn_handler.service";
-    int rc = std::system(cmd);
-    if (rc != 0)
-    {
-        lg2::error("Failed to execute command {CMD}", "CMD", cmd);
-        rc = -errno;
-        return rc;
-    }
-    return rc;
-}
-
 int startAttnHandler()
 {
+    lg2::info("enter startAttnHandler");
     int rc = ECMD_SUCCESS;
     std::string cmd = "systemctl start attn_handler.service";
 
@@ -101,6 +89,7 @@ int startAttnHandler()
 
 int istepPowerOn()
 {
+    lg2::info("enter istepPowerOn");
     int rc = ECMD_SUCCESS;
     const std::string host_reboot_off_cmd = "obmcutil hostrebootoff";
     const std::string chassis_on_cmd = "obmcutil --wait chassison";
@@ -144,6 +133,7 @@ int istepPowerOn()
         return -1; // chassis did not power on
     }
 
+    lg2::info("invoke mbox reset");
     // Trigger mbox reset
     rc = std::system(mbox_reset_cmd.c_str());
     if (rc != 0)
@@ -160,6 +150,7 @@ int istepPowerOn()
     }
 
     // Start attention handler service
+    lg2::info("invoke startAttnHandler");
     rc = startAttnHandler();
     if (rc != 0)
     {

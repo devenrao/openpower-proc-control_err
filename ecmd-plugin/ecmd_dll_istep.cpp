@@ -1,17 +1,20 @@
+#include <ecmd/ecmdDllCapi.H>
 #include <ecmdDataBuffer.H>
-#include <ecmdDllCapi.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
 #include <libipl.H>
 
 #include <ecmd_util.hpp>
 #include <istep_table.hpp>
+#include <phosphor-logging/lg2.hpp>
 
 #include <cstdint>
-#include <iostream>
 
 uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
 {
+    lg2::info(
+        "executeIstep major={MAJOR} minorstart={MINOR_START} minorend={MINOR_END} ",
+        "MAJOR", major, "MINOR_START", minorStart, "MINOR_END", minorEnd);
     using namespace istep_table;
     uint32_t rc = ECMD_SUCCESS;
 
@@ -27,13 +30,13 @@ uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
             rc = ipl_init(IPL_HOSTBOOT);
             if (rc)
             {
-                std::cerr << "Unable to set IPL in interactive mode\n";
+                lg2::error("Unable to set IPL in interactive mode");
                 return rc;
             }
         }
         else
         {
-            std::cerr << "FAIL: istepPowerOn\n";
+            lg2::error("FAIL: istepPowerOn");
             return rc;
         }
     } // major ==0
@@ -43,7 +46,8 @@ uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
         auto istepNameOpt = istep_table::getStepName(major, minor);
         if (!istepNameOpt)
         {
-            std::cerr << "Invalid istep " << major << "." << minor << std::endl;
+            lg2::error("Invalid istep major={MAJOR} minor={MINOR}", "MAJOR",
+                       major, "MINOR", minor);
             continue;
         }
         IStepDestination destination = getDestination(major, minor);
@@ -51,8 +55,7 @@ uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
         // This istep is NOOP
         if (destination == IStepDestination::EDBG_ISTEP_NOOP)
         {
-            std::cout << "Requested istep %s is NOOP " << *istepNameOpt
-                      << std::endl;
+            lg2::error("Requested istep {STEP} is noop", "STEP", *istepNameOpt);
         }
         else
         {
@@ -67,24 +70,26 @@ uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
                     rc = ecmd_util::setHostStateToRunning();
                     if (rc != ECMD_SUCCESS)
                     {
-                        std::cerr << "FAIL: failed to set host state\n";
+                        lg2::error("FAIL: failed to set host state");
                         return rc;
                     }
                 }
-                std::cout << " PASS: istep  " << *istepNameOpt << std::endl;
+                lg2::error("PASS: istep {STEP}", "STEP", *istepNameOpt);
             }
             else
             {
-                std::cerr << "  FAIL: istep check Error " << *istepNameOpt
-                          << std::endl;
+                lg2::error("FAIL: istep check Error {STEP}", "STEP",
+                           *istepNameOpt);
                 return rc;
             }
         }
     } // end for
     return rc;
 }
+
 uint32_t dllIStepsByNumber(const ecmdDataBuffer& isteps)
 {
+    lg2::info("dllIStepsByNumber ");
     using namespace istep_table;
 
     uint32_t rc = ECMD_SUCCESS;
@@ -111,10 +116,9 @@ uint32_t dllIStepsByNumber(const ecmdDataBuffer& isteps)
                 EDBG_LAST_ISTEP_NUM - EDBG_FIRST_ISTEP_NUM + 1))
         {
             rc = ECMD_INVALID_ARGS;
-            std::cerr
-                << "dllIStepsByNumber: No Steps in active range selected. "
-                << "Range start: " << EDBG_FIRST_ISTEP_NUM
-                << " end: " << EDBG_LAST_ISTEP_NUM;
+            lg2::error("No Steps in active range selected {FIRST} to {LAST}",
+                       "FIRST", EDBG_FIRST_ISTEP_NUM, "LAST",
+                       EDBG_LAST_ISTEP_NUM);
             break; // exit do-loop
         }
 
@@ -131,9 +135,8 @@ uint32_t dllIStepsByNumber(const ecmdDataBuffer& isteps)
                 {
                     /* this is only warning, as the value is in the range,
                      * but isn't being used */
-                    printf(
-                        "dllIStepsByNumber: Requested iStep Number %d is invalid.\n",
-                        activeStep);
+                    lg2::error("Requested iStep Number {STEP} is invalid",
+                               "STEP", activeStep);
                     continue;
                 }
                 /* 1a) Lookup first index entry of this active step */
@@ -162,5 +165,33 @@ uint32_t dllIStepsByNumber(const ecmdDataBuffer& isteps)
 
 uint32_t dllIStepsByName(std::string /*stepName*/)
 {
+    lg2::error("dllIStepsByName not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllIStepsByNameMultiple(std::list<std::string>)
+{
+    lg2::error("dllIStepsByNameMultiple not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllIStepsByNameRange(std::string begin, std::string end)
+{
+    lg2::info("dllIStepsByNameRange {BEGIN} to {END}", "BEGIN", begin, "END",
+              end);
+    lg2::error("dllIStepsByNameRange not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllInitChipFromFile(const ecmdChipTarget&, const char*, const char*,
+                             const char*, uint32_t)
+{
+    lg2::error("dllInitChipFromFile not implemented");
+    return ECMD_SUCCESS;
+}
+
+uint32_t dllSyncIplMode(int)
+{
+    lg2::error("dllSyncIplMode not implemented");
     return ECMD_SUCCESS;
 }
