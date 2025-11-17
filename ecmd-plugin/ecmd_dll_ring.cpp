@@ -27,6 +27,5 @@ uint32_t dllFlushRingCache(const ecmdChipTarget&)
 
 bool dllIsRingCacheEnabled(const ecmdChipTarget&)
 {
-    lg2::error("dllIsRingCacheEnabled is not implemented");
     return true;
 }

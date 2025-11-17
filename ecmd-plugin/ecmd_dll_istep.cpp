@@ -165,33 +165,36 @@ uint32_t dllIStepsByNumber(const ecmdDataBuffer& isteps)
 
 uint32_t dllIStepsByName(std::string /*stepName*/)
 {
+    // TODO: Refer to edbgEcmdDll.C and add relevant code here
     lg2::error("dllIStepsByName not implemented");
     return ECMD_SUCCESS;
 }
 
 uint32_t dllIStepsByNameMultiple(std::list<std::string>)
 {
+    // TODO: Refer to edbgEcmdDll.C and add relevant code here
     lg2::error("dllIStepsByNameMultiple not implemented");
     return ECMD_SUCCESS;
 }
 
 uint32_t dllIStepsByNameRange(std::string begin, std::string end)
 {
+    // TODO: Refer to edbgEcmdDll.C and add relevant code here
     lg2::info("dllIStepsByNameRange {BEGIN} to {END}", "BEGIN", begin, "END",
               end);
     lg2::error("dllIStepsByNameRange not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllInitChipFromFile(const ecmdChipTarget&, const char*, const char*,
                              const char*, uint32_t)
 {
     lg2::error("dllInitChipFromFile not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllSyncIplMode(int)
 {
     lg2::error("dllSyncIplMode not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }

@@ -10,7 +10,6 @@ ecmd_plugin_src = files(
   'ecmd_dll_istep.cpp',
   'ecmd_dll_scom.cpp',
   'ecmd_dll_query.cpp',
-  'ecmd_dll_error.cpp',
   'ecmd_dll_ring.cpp',
   'ecmd_util.cpp',
 )
@@ -24,6 +23,7 @@ ecmd_inc_dir = get_option('ecmd_inc_dir')   # e.g. recipe-sysroot/usr/include/ec
 
 ecmd_generated_src = files(
   ecmd_src_dir / 'ecmdClientCapiFunc.C',
+  ecmd_src_dir / 'ecmdDllCapi.C',
 )
 
 ecmd_generated_inc = include_directories(ecmd_inc_dir)

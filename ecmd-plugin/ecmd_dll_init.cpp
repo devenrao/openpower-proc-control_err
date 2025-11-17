@@ -12,14 +12,6 @@ constexpr std::string_view envVar = "ECMD_DLL_FILE";
 //----------------------------------------------
 // functions invoked from ecmdClientCapiFunc.C
 //----------------------------------------------
-
-/* Dll Common load function - verifies version */
-uint32_t dllLoadDll(const char*, uint32_t)
-{
-    return dllInitDll();
-}
-/* Dll Specific load function - used by Cronus/GFW to init variables/object
- * models */
 uint32_t dllInitDll()
 {
     const char* dtbPath = getenv("PDBG_DTB");
@@ -46,72 +38,56 @@ uint32_t dllInitDll()
     return ECMD_SUCCESS;
 }
 
-void dllPushCommandArgs()
-{
-    lg2::error("dllPushCommandArgs is not implemented");
-}
-
-void dllPopCommandArgs()
-{
-    lg2::error("dllPopCommandArgs is not implemented");
-}
-
 uint32_t dllSyncPluginState(const ecmdChipTarget&)
 {
     lg2::error("dllSyncPluginState is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllChipCleanup(const ecmdChipTarget&, uint32_t)
 {
     lg2::error("dllChipCleanup is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllGetConfiguration(const ecmdChipTarget&, std::string,
                              ecmdConfigValid_t&, std::string&, uint32_t&)
 {
     lg2::error("dllGetConfiguration is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllGetConfigurationComplex(const ecmdChipTarget&, std::string,
                                     ecmdConfigData&)
 {
     lg2::error("dllGetConfigurationComplex is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllSetConfiguration(const ecmdChipTarget&, std::string,
                              ecmdConfigValid_t, std::string, uint32_t)
 {
     lg2::error("dllSetConfiguration is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllSetConfigurationComplex(const ecmdChipTarget&, std::string,
                                     ecmdConfigData)
 {
     lg2::error("dllSetConfigurationComplex is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllDeconfigureTarget(const ecmdChipTarget&)
 {
     lg2::error("dllDeconfigureTarget is not implemented");
-    return ECMD_SUCCESS;
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllConfigureTarget(const ecmdChipTarget&)
 {
     lg2::error("dllConfigureTarget is not implemented");
-    return ECMD_SUCCESS;
-}
-
-/* Dll Common unload function */
-uint32_t dllUnloadDll()
-{
-    return dllFreeDll();
+    return ECMD_FUNCTION_NOT_SUPPORTED;
 }
 
 uint32_t dllSetConfigurationComplexHidden(const ecmdChipTarget&, std::string,
@@ -121,30 +97,15 @@ uint32_t dllSetConfigurationComplexHidden(const ecmdChipTarget&, std::string,
     return ECMD_SUCCESS;
 }
 
-/* Dll Specific unload function - deallocates variables/object models */
 uint32_t dllFreeDll()
 {
     lg2::error("dllFreeDll is not implemented");
     return ECMD_SUCCESS;
 }
 
-uint32_t dllCheckDllVersion(const char*)
-{
-    lg2::error("dllCheckDllVersion is not implemented");
-    return ECMD_SUCCESS;
-}
-
-uint32_t dllCommonCommandArgs([[maybe_unused]] int* argc,
-                              [[maybe_unused]] char** argv[])
-{
-    lg2::error("dllCommonCommandArgs is not implemented");
-    return ECMD_SUCCESS;
-}
-
 uint32_t dllSpecificCommandArgs([[maybe_unused]] int* io_argc,
                                 [[maybe_unused]] char** io_argv[])
 {
-    lg2::error("dllSpecificCommandArgs is not implemented");
     return ECMD_SUCCESS;
 }
 
@@ -179,18 +140,6 @@ void dllOutput(const char* msg)
     lg2::info("msg {MSG}", "MSG", msg);
 }
 
-uint32_t dllGetGlobalVar(ecmdGlobalVarType_t)
-{
-    lg2::error("dllGetGlobalVar is not implemented");
-    return ECMD_SUCCESS;
-}
-
-uint32_t dllSetGlobalVar(ecmdGlobalVarType_t, uint32_t)
-{
-    lg2::error("dllSetGlobalVar is not implemented");
-    return ECMD_SUCCESS;
-}
-
 void dllSetTraceMode(ecmdTraceType_t, bool)
 {
     lg2::error("dllSetTraceMode is not implemented");
@@ -199,23 +148,21 @@ void dllSetTraceMode(ecmdTraceType_t, bool)
 bool dllQueryTraceMode(ecmdTraceType_t)
 {
     lg2::error("dllQueryTraceMode is not implemented");
-    return true;
+    return false;
 }
 
-uint32_t dllDelay(uint32_t, uint32_t)
+uint32_t dllDelay(uint32_t, uint32_t msDelay)
 {
-    lg2::error("dllDelay is not implemented");
-    return ECMD_SUCCESS;
+    uint32_t rc = usleep(msDelay * 1000);
+    if (rc != 0)
+    {
+        lg2::error("dllDelay usleep failed");
+    }
+    return rc;
 }
 
-std::string dllGetCurrentCmdline()
+std::string dllLastError()
 {
-    lg2::error("dllGetCurrentCmdline is not implemented");
+    lg2::error("dllLastError is not implemented");
     return {};
-}
-
-void dllSetCurrentCmdline([[maybe_unused]] int argc,
-                          [[maybe_unused]] char* argv[])
-{
-    lg2::error("dllSetCurrentCmdline is not implemented");
 }
