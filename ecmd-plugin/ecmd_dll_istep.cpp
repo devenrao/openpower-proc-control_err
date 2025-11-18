@@ -1,4 +1,4 @@
-#include <ecmd/ecmdDllCapi.H>
+#include <ecmdDllCapi.H>
 #include <ecmdDataBuffer.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>

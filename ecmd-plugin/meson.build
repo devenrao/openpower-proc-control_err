@@ -12,21 +12,8 @@ ecmd_plugin_src = files(
   'ecmd_dll_query.cpp',
   'ecmd_dll_ring.cpp',
   'ecmd_util.cpp',
+  'ecmd_dll_error.cpp',
 )
-
-# ---------------------------------------------------------------------
-# Paths passed from bitbake/recipe
-# ---------------------------------------------------------------------
-
-ecmd_src_dir = get_option('ecmd_src_dir')   # e.g. recipe-sysroot/usr/lib/ecmd
-ecmd_inc_dir = get_option('ecmd_inc_dir')   # e.g. recipe-sysroot/usr/include/ecmd
-
-ecmd_generated_src = files(
-  ecmd_src_dir / 'ecmdClientCapiFunc.C',
-  ecmd_src_dir / 'ecmdDllCapi.C',
-)
-
-ecmd_generated_inc = include_directories(ecmd_inc_dir)
 
 # ---------------------------------------------------------------------
 # Include directories
@@ -87,7 +74,6 @@ ecmd_plugin_lib = shared_library(
   ecmd_plugin_src + ecmd_generated_src,
   include_directories: [
       ecmd_plugin_inc,
-      ecmd_generated_inc,
   ],
   dependencies: ecmd_plugin_deps,
   cpp_args: ecmd_remove_flags,
@@ -99,7 +85,7 @@ ecmd_plugin_lib = shared_library(
 
 ecmd_plugin_dep = declare_dependency(
     link_with: ecmd_plugin_lib,
-    include_directories: [ecmd_plugin_inc, ecmd_generated_inc],
+    include_directories: [ecmd_plugin_inc],
     dependencies: ecmd_plugin_deps
 )
 

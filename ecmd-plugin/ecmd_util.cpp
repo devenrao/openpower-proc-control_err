@@ -25,6 +25,27 @@ namespace ecmd_util
 {
 constexpr auto GENESIS_BOOT_FILE = "/var/lib/phal/genesisboot";
 
+bool isFunctionalTarget(struct pdbg_target* target)
+{
+    uint8_t buf[5];
+    bool isFunc = false;
+
+    if (!pdbg_target_get_attribute_packed(target, "ATTR_HWAS_STATE", "41", 1,
+                                          buf))
+    {
+        lg2::error("ATTR_HWAS_STATE Attribute get failed");
+        isFunc = false;
+    }
+
+    // isFuntional bit is stored in 4th byte and bit 3 position in HWAS_STATE
+    if (buf[4] & 0x20)
+    {
+        isFunc = true;
+    }
+
+    return isFunc;
+}
+
 struct pdbg_target* get_fsi_target(uint32_t pos)
 {
     struct pdbg_target* fsi = nullptr;
@@ -190,4 +211,94 @@ int setHostStateToRunning()
     }
     return ECMD_SUCCESS;
 }
+
+// convert chipunit string to pdbg class type, as pdbg does not accept ecmd
+// strings
+uint32_t p10x_convertCUString_to_pdbgClassString(std::string cuString,
+                                                 std::string& o_pdbgClassType)
+{
+    uint32_t rc = ECMD_SUCCESS;
+    uint32_t l_index;
+
+    for (l_index = 0;
+         l_index < (sizeof(ChipUnitTable) / sizeof(p10_chipUnit_t)); l_index++)
+    {
+        // Looking for input chip unit type in table
+        if (cuString == ChipUnitTable[l_index].chipUnitType)
+            break;
+    }
+    // Can't find cuString in table
+    if (l_index >= (sizeof(ChipUnitTable) / sizeof(p10_chipUnit_t)))
+    {
+        lg2::error("Unknown chip unit {CHIP}", "CHIP", cuString);
+        return ECMD_FAILURE;
+    }
+
+    o_pdbgClassType = ChipUnitTable[l_index].pdbgClassType;
+    return rc;
+}
+
+uint8_t getChipUnitPos(pdbg_target* target)
+{
+    uint8_t chipUnitPos = -1; // chip unit position
+
+    // size: uint8 => 1, uint16 => 2. uint32 => 4 uint64=> 8
+    // typedef uint8_t ATTR_CHIP_UNIT_POS_Type;
+    if (!pdbg_target_get_attribute(target, "ATTR_CHIP_UNIT_POS", 1, 1,
+                                   &chipUnitPos))
+    {
+        lg2::error("ATTR_CHIP_UNIT_POS Attribute get failed");
+    }
+
+    return chipUnitPos;
+}
+
+std::string getChipType()
+{
+    std::string chipType;
+
+    // determine the chip type
+    switch (pdbg_get_proc())
+    {
+        case PDBG_PROC_P9:
+            chipType = "p9";
+            break;
+
+        case PDBG_PROC_P10:
+            chipType = "p10";
+            break;
+
+        /*
+        case PDBG_PROC_PST:
+          chipType = "pst";
+          break;
+        */
+        default:
+            chipType = "Unknown";
+            break;
+    }
+    return chipType;
+}
+
+uint32_t p10x_convertPDBGClassString_to_CUString(std::string_view pdbgClassType,
+                                                 std::string& chipUnitType)
+{
+    // Search for matching pdbgClassType
+    const auto it =
+        std::find_if(std::begin(ChipUnitTable), std::end(ChipUnitTable),
+                     [&](const auto& entry) {
+                         return pdbgClassType == entry.pdbgClassType;
+                     });
+
+    if (it == std::end(ChipUnitTable))
+    {
+        lg2::error("Unknown pdbg class unit {UNIT}", "UNIT",
+                   std::string(pdbgClassType));
+        return ECMD_FAILURE;
+    }
+
+    chipUnitType = it->chipUnitType;
+    return ECMD_SUCCESS;
+}
+
 } // namespace ecmd_util

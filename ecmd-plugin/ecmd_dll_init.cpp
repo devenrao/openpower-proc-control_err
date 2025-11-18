@@ -1,32 +1,36 @@
-#include <ecmd/ecmdDllCapi.H>
+#include <ecmdDllCapi.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
 extern "C"
 {
 #include <libpdbg.h>
 }
+#include <unistd.h>
+
 #include <phosphor-logging/lg2.hpp>
 
-constexpr std::string_view envVar = "ECMD_DLL_FILE";
 
-//----------------------------------------------
-// functions invoked from ecmdClientCapiFunc.C
-//----------------------------------------------
+uint32_t dllLoadDll(const char* version, uint32_t)
+{
+    lg2::info("dllLoadDll version {VER}", "VER", version);
+    return dllInitDll();
+}
+
+uint32_t dllUnloadDll()
+{
+    lg2::info("dllUnloadDll ");
+    return dllFreeDll();
+}
+
 uint32_t dllInitDll()
 {
+    lg2::info("dllInitDll ");
     const char* dtbPath = getenv("PDBG_DTB");
     if (!dtbPath)
     {
         lg2::error("Failed to get PDBG_DTB env variable");
         return -1;
     }
-    const char* dllFile = getenv("ECMD_DLL_FILE");
-    if (!dllFile)
-    {
-        lg2::error("Failed to get  ECMD_DLL_FILE env variable");
-        return -1;
-    }
-
     const char* ecmdExe = getenv("ECMD_EXE");
     if (!ecmdExe)
     {
@@ -38,6 +42,11 @@ uint32_t dllInitDll()
     return ECMD_SUCCESS;
 }
 
+uint32_t dllCheckDllVersion(const char*)
+{
+    lg2::error("dllCheckDllVersion is not implemented");
+    return ECMD_FUNCTION_NOT_SUPPORTED;
+}
 uint32_t dllSyncPluginState(const ecmdChipTarget&)
 {
     lg2::error("dllSyncPluginState is not implemented");
