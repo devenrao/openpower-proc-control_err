@@ -1,12 +1,14 @@
+#include <ecmd_dll_capi.H>
+
 #include <ecmdDataBuffer.H>
-#include <ecmdDllCapi.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
 
 #include <phosphor-logging/lg2.hpp>
 
 #include <cstdint>
-
+extern "C"
+{
 std::string dllGetErrorMsg(uint32_t, bool, bool, bool)
 {
     lg2::error("dllGetErrorMsg is not implemented");
@@ -49,14 +51,4 @@ uint32_t dllFlushRegisteredErrorTargets(uint32_t)
     return ECMD_SUCCESS;
 }
 
-std::string dllParseReturnCode(uint32_t)
-{
-    lg2::error("dllParseReturnCode is not implemented");
-    return {};
-}
-
-std::string dllLastError()
-{
-    lg2::error("dllLastError is not implemented");
-    return {};
-}
+} //extern "C"

@@ -1,4 +1,5 @@
-#include <ecmdDllCapi.H>
+#include <ecmd_dll_capi.H>
+
 #include <ecmdDataBuffer.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
@@ -10,6 +11,8 @@ extern "C"
 #include <libpdbg.h>
 }
 #include <cstdint>
+extern "C"
+{
 
 uint32_t queryConfigExist(const ecmdChipTarget& ecmdTarget,
                           ecmdQueryData& queryData, ecmdQueryDetail_t detail,
@@ -439,3 +442,4 @@ uint32_t dllQueryScom(const ecmdChipTarget&, std::list<ecmdScomData>&, uint64_t,
     lg2::error("dllQueryScom is not implemented");
     return ECMD_SUCCESS;
 }
+} //extern C

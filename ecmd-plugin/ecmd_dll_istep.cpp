@@ -1,4 +1,4 @@
-#include <ecmdDllCapi.H>
+#include <ecmd_dll_capi.H>
 #include <ecmdDataBuffer.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
@@ -9,6 +9,9 @@
 #include <phosphor-logging/lg2.hpp>
 
 #include <cstdint>
+
+extern "C"
+{
 
 uint32_t executeIstep(uint16_t major, uint16_t minorStart, uint16_t minorEnd)
 {
@@ -185,16 +188,4 @@ uint32_t dllIStepsByNameRange(std::string begin, std::string end)
     lg2::error("dllIStepsByNameRange not implemented");
     return ECMD_FUNCTION_NOT_SUPPORTED;
 }
-
-uint32_t dllInitChipFromFile(const ecmdChipTarget&, const char*, const char*,
-                             const char*, uint32_t)
-{
-    lg2::error("dllInitChipFromFile not implemented");
-    return ECMD_FUNCTION_NOT_SUPPORTED;
-}
-
-uint32_t dllSyncIplMode(int)
-{
-    lg2::error("dllSyncIplMode not implemented");
-    return ECMD_FUNCTION_NOT_SUPPORTED;
-}
+} // extern "C"

@@ -1,31 +1,16 @@
-#include <ecmdDllCapi.H>
 #include <ecmdDataBuffer.H>
 #include <ecmdReturnCodes.H>
 #include <ecmdStructs.H>
+#include <ecmd_dll_capi.H>
 
 #include <phosphor-logging/lg2.hpp>
 
 #include <cstdint>
-
-uint32_t dllEnableRingCache(const ecmdChipTarget&)
+extern "C"
 {
-    lg2::error("dllEnableRingCache is not implemented");
-    return ECMD_SUCCESS;
-}
-
-uint32_t dllDisableRingCache(const ecmdChipTarget&)
-{
-    lg2::error("dllDisableRingCache is not implemented");
-    return ECMD_SUCCESS;
-}
-
-uint32_t dllFlushRingCache(const ecmdChipTarget&)
-{
-    lg2::error("dllFlushRingCache is not implemented");
-    return ECMD_SUCCESS;
-}
-
 bool dllIsRingCacheEnabled(const ecmdChipTarget&)
 {
-    return true;
+    lg2::error("dllIsRingCacheEnabled is not implemented");
+    return false;
+}
 }
